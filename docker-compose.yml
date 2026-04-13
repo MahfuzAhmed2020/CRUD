@@ -1,0 +1,38 @@
+version: "3.8"
+
+services:
+
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-container
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: cruddb
+    ports:
+      - "3307:3306"
+    networks:
+      - crud-net
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+  app:
+    image: mahfuzdocker20/crud-app
+    container_name: crud-app
+    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+    networks:
+      - crud-net
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/cruddb?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+
+networks:
+  crud-net:
+
+volumes:
+  mysql-data:
