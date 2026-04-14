@@ -1,9 +1,371 @@
+mahfuzdocker20
 
 TO START THE APP IN DOCKER
 PS C:\Users\mahfu> cd C:\Users\mahfu\Desktop\CRUD
 PS C:\Users\mahfu\Desktop\CRUD> docker-compose up -d
 PS C:\Users\mahfu\Desktop\CRUD> docker ps
 PS C:\Users\mahfu\Desktop\CRUD> docker stop $(docker ps -q)
+=================================================================================================
+             
+                FOR TESTERS 
+Tester does NOT need THE code or environment setup.
+They only need to pull and run the image.
+
+
+What tester's will do (with Docker Hub)
+📌 Step 1: Install only Docker
+
+Tester just needs:
+
+Docker Desktop installed
+No Java
+No Maven
+No MySQL setup
+
+📌 Step 2: Pull the image from Docker Hub
+
+docker pull yourdockerhubusername(mahfuzdocker20)/crud-app
+OR
+docker pull mahfuzdocker20/crud-app:CH1
+
+👉 This downloads your Spring Boot app already packaged.
+
+
+📁 Step 3: Create folder
+
+Tell tester:
+
+💻 Windows (Command Prompt / PowerShell)
+
+mkdir crud-test
+cd crud-test
+touch docker-compose.yml
+notepad docker-compose.yml   # Windows OR 
+code docker-compose.yml      # VS Code
+
+
+Paste content
+
+🍎 Mac (Terminal)
+
+mkdir crud-test
+cd crud-test
+touch docker-compose.yml
+open -e docker-compose.yml # Mac default editor OR
+code docker-compose.yml    # VS Code OR
+nano docker-compose.yml    # Terminal editor (nano)
+
+Paste content
+Save: CTRL + X → Y → Enter
+
+
+📄 Step 4: Create file
+
+Create file named: docker-compose.yml
+
+📌 Paste this inside:
+services:
+
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-container
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: cruddb
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+  app:
+    image: mahfuzdocker20/crud-app:CH1
+    container_name: crud-app
+    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/cruddb?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+
+volumes:
+  mysql-data:
+
+
+
+▶️ Step 5: Run application
+
+docker-compose up -d
+
+OR 
+
+docker-compose up
+
+👉 This will:
+
+Download MySQL
+Download your app from Docker Hub
+Start everything
+
+
+
+
+
+📌 Step 6: Run the container: If ONLY Spring Boot app:
+
+docker run -p 8080:8080 yourdockerhubusername(mahfuzdocker20)/crud-app
+
+If Spring Boot + MySQL (recommended setup)
+
+
+📌 Step 7: Test APIs
+
+Tester just opens:
+
+http://localhost:8080/
+
+or uses Postman:
+
+POST http://localhost:8080/api/products
+
+Body:
+{
+  "name": "LAPTOP",
+  "price": 100
+  
+}
+🧠 What YOU must tell your tester (important instructions)
+
+You should give them this checklist:
+
+✅ 1. Pull image
+
+“Run docker pull from Docker Hub”
+
+✅ 2. Start containers
+
+“Use docker-compose up”
+
+✅ 3. Use these endpoints
+
+“App runs on http://localhost:8080”
+
+✅ 4. Test APIs
+
+“Use Postman / Swagger”
+
+Create_Product:
+
+POST http://localhost:8080/api/products
+
+Body:
+{
+  "name": "LAPTOP",
+  "price": 100
+  
+}
+
+OR
+
+curl --location 'http://localhost:8080/api/products' \
+--header 'Content-Type: application/json' \
+--data '{
+  "name": "LAPTOP",
+  "price": 100
+
+  
+}'
+
+PRODUDT WITH QUERY PARAMETER:
+GET http://localhost:8080/api/products/search?name=LAPTOP&price=100&id=4
+
+
+All_products
+GET http://localhost:8080/api/products
+
+
+
+Partial_update:
+PATCH http://localhost:8080/api/products/5
+{
+  "name": "Router"
+  //,"price": 100
+  
+}
+
+
+Full_update:
+PUT http://localhost:8080/api/products/4
+{
+  "name": "MONITOR"
+  ,"price": 100
+  
+}
+
+OR 
+
+curl --location --request PUT 'http://localhost:8080/api/products/4' \
+--header 'Content-Type: application/json' \
+--data '{
+  "name": "MONITOR",
+  "price": 100
+
+  
+}'
+
+delete_by_id
+DELETE http://localhost:8080/api/products/1
+
+delete_by_name: 
+DELETE http://localhost:8080/api/products?name=LAPTOP
+
+
+🔗 How everything connects (simple view)
+Docker Hub
+   ↓ (pull image)
+Tester machine
+   ↓ (run container)
+Spring Boot app (inside Docker)
+   ↓
+MySQL container (if used)
+
+
+TO STOP: 
+
+docker stop $(docker ps -q) 
+OR 
+docker-compose down
+
+===================================================================================
+Your Docker Hub username is mahfuzdocker20, so here’s exactly what to do after you change your code.
+
+🔁 FULL FLOW: Push updated code to Docker Hub
+✅ Step 1: Rebuild your Spring Boot app
+mvn clean package
+
+👉 This updates your .jar file inside target/
+
+✅ Step 2: Build Docker image (new version)
+
+You can reuse CH1 OR create a new version (recommended)
+
+Option A (overwrite CH1):
+docker build -t crud-app:CH1 .
+Option B (better – new version):
+docker build -t crud-app:CH2 .
+✅ Step 3: Tag image for Docker Hub
+
+👉 VERY IMPORTANT
+
+docker tag crud-app:CH2 mahfuzdocker20/crud-app:CH2
+
+(Replace CH2 with whatever version you used)
+
+✅ Step 4: Login to Docker Hub
+docker login
+
+Enter:
+
+Username: mahfuzdocker20
+Password: (your Docker Hub password)
+
+
+✅ Step 5: Push to Docker Hub
+
+docker push mahfuzdocker20/crud-app:tagname
+
+docker push mahfuzdocker20/crud-app:CH2
+
+
+🎉 Done!
+
+Now your image is live at:
+
+👉 https://hub.docker.com/r/mahfuzdocker20/crud-app
+
+🔄 If using docker-compose
+
+Update your docker-compose.yml:
+
+image: mahfuzdocker20/crud-app:CH2
+
+Then run:
+
+docker-compose down
+docker-compose up -d
+⚡ Pro Tip (VERY IMPORTANT)
+❌ Don’t always reuse CH1
+
+If you keep using:
+
+crud-app:CH1
+
+👉 Docker may cache old version
+
+✅ Use versioning:
+CH1 → CH2 → CH3
+
+OR:
+
+v1 → v2 → v3
+🧠 Simple mental model
+Code change
+   ↓
+mvn build
+   ↓
+docker build
+   ↓
+docker tag (add username)
+   ↓
+docker push
+
+
+
+=================================================================================================
+
+
+Enter MySQL inside Docker
+
+docker exec -it mysql-container mysql -u root -p
+
+
+==============================================================
+
+When do you NEED to use tags?
+✅ Required if you want to push to Docker Hub
+
+docker tag crud-app:CH1 yourdockerhubusername/crud-app:CH1
+docker push yourdockerhubusername/crud-app:CH1
+
+=====================================================================
+
+Change code
+   ↓
+mvn clean package
+   ↓
+docker build -t crud-app:CH1 .
+   ↓
+docker-compose up -d --build
+
+Here, CH1=TAG_NAME
+=============================================
+
+
+
+Quick Tip (for faster development)
+
+If you don’t want to rebuild every time:
+
+👉 Run Spring Boot locally (without Docker):
+
+mvn spring-boot:run
+
+Then only use Docker for MySQL
+
+
 
 ===================================================================================================
 Here’s a clean breakdown of **everything  used (commands + code changes)**.
@@ -330,3 +692,124 @@ Stop ALL containers on your system
 If you want to stop everything Docker is running:
 
 docker stop $(docker ps -q)
+
+
+
+==================================================================================
+
+
+
+If a tester wants to use your image CH1, here’s exactly what they should do.
+
+🧪 ✅ OPTION 1: Run directly (simplest)
+
+They just run:
+
+docker run -p 8080:8080 mahfuzdocker20/crud-app:CH1
+
+👉 Then open:
+
+http://localhost:8080
+⚠️ BUT — Important (your app uses MySQL!)
+
+Your app is NOT standalone
+👉 It needs a MySQL database
+
+So tester must also run MySQL 👇
+
+
+
+
+🧪 ✅ OPTION 2: Run with MySQL (recommended)
+
+Step 1: Run MySQL container
+
+
+docker run -d \
+  --name mysql-container \
+  -e MYSQL_ROOT_PASSWORD=root \
+  -e MYSQL_DATABASE=cruddb \
+  -p 3306:3306 \
+  mysql:8.0
+
+
+
+
+Step 2: Run your app
+
+docker run -p 8080:8080 \
+  -e SPRING_DATASOURCE_URL=jdbc:mysql://host.docker.internal:3306/cruddb \
+  -e SPRING_DATASOURCE_USERNAME=root \
+  -e SPRING_DATASOURCE_PASSWORD=root \
+  mahfuzdocker20/crud-app:CH1
+
+
+
+
+
+
+🚀 ✅ BEST OPTION (docker-compose — easiest for tester)
+
+👉 Give tester this file:
+
+docker-compose.yml
+
+
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-container
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: cruddb
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+  app:
+    image: mahfuzdocker20/crud-app:CH1
+    container_name: crud-app
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/cruddb
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+
+volumes:
+  mysql-data:
+Then tester just runs:
+docker-compose up -d
+
+
+
+🎉 DONE — everything runs automatically
+
+🧠 What tester is actually doing
+Pull image from Docker Hub
+       ↓
+Run container (CH1 version)
+       ↓
+Connect to MySQL
+       ↓
+Access API on port 8080
+
+
+
+🔍 If they don’t have your image
+
+Docker will automatically pull it:
+
+mahfuzdocker20/crud-app:CH1
+
+
+
+🎯 Final tip
+
+Always tell testers:
+👉 “Use this version: CH1”
+👉 “Run with docker-compose (recommended)”
