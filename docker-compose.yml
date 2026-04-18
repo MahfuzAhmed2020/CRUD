@@ -17,7 +17,7 @@ services:
       - mysql-data:/var/lib/mysql
 
   app:
-    image: mahfuzdocker20/crud-app
+    image: ${DOCKER_IMAGE:-mahfuzdocker20/crud-app:latest}
     container_name: crud-app
     restart: always
     ports:
