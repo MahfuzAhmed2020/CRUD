@@ -34,7 +34,7 @@ public class ProductController {
 //http://localhost:8080/api/hello
 @GetMapping("/hello")
 public String sayHello(){ 
-    return "Hello, World!";
+    return "Hello, World! And welcome to Spring Boot CRUD API.";
 }
 
 
