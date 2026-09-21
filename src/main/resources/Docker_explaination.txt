@@ -6,6 +6,12 @@ PS C:\Users\mahfu\Desktop\CRUD> docker-compose up -d
 PS C:\Users\mahfu\Desktop\CRUD> docker ps
 PS C:\Users\mahfu\Desktop\CRUD> docker stop $(docker ps -q)
 =================================================================================================
+
+swagger-ui
+
+http://localhost:8080/swagger-ui/index.html
+
+=================================================================================================
              
                 FOR TESTERS 
 Tester does NOT need THE code or environment setup.
