@@ -1,0 +1,129 @@
+# CRUD Application - Docker Setup
+
+## Requirements
+
+Install:
+
+* Docker Desktop
+* Git
+
+## 1. Clone the project
+
+```powershell
+git clone <YOUR-GITHUB-REPOSITORY-URL>
+cd CRUD
+```
+
+## 2. Login to Docker Hub
+
+```powershell
+docker login
+```
+
+## 3. Pull and start the application
+
+The Spring Boot Docker image is already available on Docker Hub.
+
+```powershell
+docker-compose pull
+docker-compose up -d
+```
+
+## 4. Check running containers
+
+```powershell
+docker ps
+```
+
+Expected containers:
+
+```text
+crud-app
+mysql-container
+```
+
+## 5. Open the application
+
+Open your browser:
+
+```text
+http://localhost:8080
+```
+
+## 6. Database Configuration
+
+MySQL runs inside Docker using:
+
+```text
+Database: cruddb
+Username: root
+Password: root
+Container Port: 3306
+Host Port: 3307
+```
+
+From the Spring Boot container, the database connection is:
+
+```text
+jdbc:mysql://mysql:3306/cruddb
+```
+
+Do NOT change `mysql` to `localhost` in the Spring Boot Docker configuration.
+
+## 7. Stop the application
+
+```powershell
+docker-compose down
+```
+
+## 8. Stop and remove containers
+
+```powershell
+docker-compose down
+```
+
+## 9. Start again
+
+```powershell
+docker-compose up -d
+```
+
+## 10. View application logs
+
+```powershell
+docker logs crud-app
+```
+
+Follow the logs continuously:
+
+```powershell
+docker logs -f crud-app
+```
+
+## 11. View MySQL logs
+
+```powershell
+docker logs mysql-container
+```
+
+## Docker Image
+
+Spring Boot image:
+
+```text
+mahfuzdocker20/crud-app:latest
+```
+
+The team member does not need to run:
+
+```powershell
+mvn clean package
+```
+
+or:
+
+```powershell
+docker build
+```
+
+because the application image has already been built and pushed to Docker Hub.
